@@ -1,0 +1,91 @@
+services:
+  zoo1:
+    image: ${ZOOKEEPER_IMAGE}:${ZOOKEEPER_IMAGE_VERSION}
+    restart: unless-stopped
+    ports:
+      - "2181:2181"
+    environment:
+      ZOOKEEPER_SERVER_ID: 1
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+      ZOOKEEPER_INIT_LIMIT: 10
+      ZOOKEEPER_SYNC_LIMIT: 5
+      ZOOKEEPER_PEER_PORT: 2888
+      ZOOKEEPER_LEADER_PORT: 3888
+      ZOOKEEPER_SERVERS: zoo1:2888:3888;zoo2:2888:3888;zoo3:2888:3888
+    volumes:
+      - zookeeper1-data:/var/lib/zookeeper/data
+      - zookeeper1-logs:/var/lib/zookeeper/log
+    networks:
+      - backend
+  zoo2:
+    image: ${ZOOKEEPER_IMAGE}:${ZOOKEEPER_IMAGE_VERSION}
+    restart: unless-stopped
+    ports:
+      - "2182:2182"
+    environment:
+      ZOOKEEPER_SERVER_ID: 2
+      ZOOKEEPER_CLIENT_PORT: 2182
+      ZOOKEEPER_TICK_TIME: 2000
+      ZOOKEEPER_INIT_LIMIT: 10
+      ZOOKEEPER_SYNC_LIMIT: 5
+      ZOOKEEPER_PEER_PORT: 2888
+      ZOOKEEPER_LEADER_PORT: 3888
+      ZOOKEEPER_SERVERS: zoo1:2888:3888;zoo2:2888:3888;zoo3:2888:3888
+    volumes:
+      - zookeeper2-data:/var/lib/zookeeper/data
+      - zookeeper2-logs:/var/lib/zookeeper/log
+    networks:
+      - backend
+  zoo3:
+    image: ${ZOOKEEPER_IMAGE}:${ZOOKEEPER_IMAGE_VERSION}
+    restart: unless-stopped
+    ports:
+      - "2183:2183"
+    environment:
+      ZOOKEEPER_SERVER_ID: 3
+      ZOOKEEPER_CLIENT_PORT: 2183
+      ZOOKEEPER_TICK_TIME: 2000
+      ZOOKEEPER_INIT_LIMIT: 10
+      ZOOKEEPER_SYNC_LIMIT: 5
+      ZOOKEEPER_PEER_PORT: 2888
+      ZOOKEEPER_LEADER_PORT: 3888
+      ZOOKEEPER_SERVERS: zoo1:2888:3888;zoo2:2888:3888;zoo3:2888:3888
+    volumes:
+      - zookeeper3-data:/var/lib/zookeeper/data
+      - zookeeper3-logs:/var/lib/zookeeper/log
+    networks:
+      - backend
+  zoonavigator:
+    image: elkozmon/zoonavigator:${ZOONAVIGATOR_VERSION}
+    restart: unless-stopped
+    ports:
+      - "9000:9000"
+    environment:
+      - CONNECTION_ZK1_NAME=zoo1
+      - CONNECTION_ZK1_CONN=zoo1:2181
+      - CONNECTION_ZK2_NAME=zoo2
+      - CONNECTION_ZK2_CONN=zoo2:2182
+      - CONNECTION_ZK3_NAME=zoo3
+      - CONNECTION_ZK3_CONN=zoo3:2183
+      - AUTO_CONNECT_CONNECTION_ID=ZK1
+    depends_on:
+      - zoo1
+      - zoo2
+      - zoo3
+    networks:
+      - backend
+      - vpc
+networks:
+  backend:
+    driver: bridge
+    internal: true
+  vpc:
+    driver: bridge
+volumes:
+  zookeeper1-data:
+  zookeeper1-logs:
+  zookeeper2-data:
+  zookeeper2-logs:
+  zookeeper3-data:
+  zookeeper3-logs:
