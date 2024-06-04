@@ -45,6 +45,52 @@ services:
       test: ["CMD", "pg_isready", "-q", "-d", "${DB_DATABASE:-security}", "-U", "${DB_USERNAME:-security}"]
       retries: 3
       timeout: 5s
+  license:
+    build:
+      context: ./license
+      dockerfile: Dockerfile
+      args:
+        WWWGROUP: '${WWWGROUP}'
+    extra_hosts:
+      - 'host.docker.internal:host-gateway'
+    ports:
+      - '${APP_LICENSE_PORT:-8083}:80'
+    env_file:
+      - ./license/.env
+    environment:
+      WWWUSER: '${WWWUSER}'
+      APP_IN_DOCKER: 1
+      XDEBUG_MODE: '${APP_LICENSE_XDEBUG_MODE:-off}'
+      XDEBUG_CONFIG: '${APP_LICENSE_XDEBUG_CONFIG:-client_host=host.docker.internal}'
+      IGNITION_LOCAL_SITES_PATH: '${PWD}'
+    volumes:
+      - './license:/var/www/html'
+      - './secrets:/tmp/secrets'
+    networks:
+      - license
+      - backend
+      - vpc
+    depends_on:
+      - license-db
+  license-db:
+    image: postgres:${APP_LICENSE_DB_IMAGE_VERSION}
+    ports:
+      - '${APP_LICENSE_DB_PORT:-5433}:5432'
+    env_file:
+      - ./license/.env
+    environment:
+      PGPASSWD: '${DB_PASSWORD:-secret}'
+      POSTGRES_DB: '${DB_DATABASE:-license}'
+      POSTGRES_USER: '${DB_USERNAME:-license}'
+      POSTGRES_PASSWORD: '${DB_PASSWORD:-secret}'
+    volumes:
+      - license-db-data:/var/lib/postgresql/data
+    networks:
+      - license
+    healthcheck:
+      test: ["CMD", "pg_isready", "-q", "-d", "${DB_DATABASE:-license}", "-U", "${DB_USERNAME:-license}"]
+      retries: 3
+      timeout: 5s
   zoo1:
     image: ${ZOOKEEPER_IMAGE}:${ZOOKEEPER_IMAGE_VERSION}
     restart: unless-stopped
@@ -294,6 +340,9 @@ networks:
   security:
     driver: bridge
     internal: true
+  license:
+    driver: bridge
+    internal: true
   vpc:
     driver: bridge
 volumes:
@@ -307,3 +356,4 @@ volumes:
   kafka2-data:
   kafka3-data:
   security-db-data:
+  license-db-data:

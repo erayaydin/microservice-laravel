@@ -1,0 +1,49 @@
+{
+  "name": "erayaydin/mservices-license",
+  "type": "project",
+  "description": "License Service",
+  "keywords": ["license"],
+  "license": "MIT",
+  "require": {
+    "php": "^8.2",
+    "firebase/php-jwt": "^6.10",
+    "laravel/framework": "^11.9",
+    "laravel/tinker": "^2.9"
+  },
+  "require-dev": {
+    "laravel/pint": "^1.13"
+  },
+  "autoload": {
+    "psr-4": {
+      "MService\\License\\": "src/"
+    }
+  },
+  "scripts": {
+    "post-autoload-dump": [
+      "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
+      "@php artisan package:discover --ansi"
+    ],
+    "post-root-package-install": [
+      "@php -r \"file_exists('.env') || copy('.env.example', '.env');\""
+    ],
+    "post-create-project-cmd": [
+      "@php artisan key:generate --ansi"
+    ]
+  },
+  "extra": {
+    "laravel": {
+      "dont-discover": []
+    }
+  },
+  "config": {
+    "optimize-autoloader": true,
+    "preferred-install": "dist",
+    "sort-packages": true,
+    "allow-plugins": {
+      "pestphp/pest-plugin": true,
+      "php-http/discovery": true
+    }
+  },
+  "minimum-stability": "stable",
+  "prefer-stable": true
+}

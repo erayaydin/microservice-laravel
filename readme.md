@@ -11,6 +11,7 @@
 - [Running the Services](#running-the-services)
 - [Microservices](#microservices)
   - [Security](#security-service)
+  - [License](#license-service)
 - [Contributing](#contributing)
 - [License](#license)
 
@@ -129,6 +130,19 @@ Authentication and authorization will be handled with OAuth2.
 #### Data Store
 
 - **PostgreSQL**: The Security Service uses PostgreSQL to store user credentials and authorization data.
+
+### License Service
+
+The Security Service is responsible for handling user licenses.
+Auth verification will be handled with JWT key decoding.
+
+#### Endpoints
+
+- `GET /health`: Health check endpoint. It'll respond with 200 status code.
+
+#### Data Store
+
+- **PostgreSQL**: The License Service uses PostgreSQL to store license information.
 
 ## Contributing
 
