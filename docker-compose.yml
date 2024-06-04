@@ -1,4 +1,50 @@
 services:
+  security:
+    build:
+      context: ./security
+      dockerfile: Dockerfile
+      args:
+        WWWGROUP: '${WWWGROUP}'
+    extra_hosts:
+      - 'host.docker.internal:host-gateway'
+    ports:
+      - '${APP_SECURITY_PORT:-8082}:80'
+    env_file:
+      - ./security/.env
+    environment:
+      WWWUSER: '${WWWUSER}'
+      APP_IN_DOCKER: 1
+      XDEBUG_MODE: '${APP_SECURITY_XDEBUG_MODE:-off}'
+      XDEBUG_CONFIG: '${APP_SECURITY_XDEBUG_CONFIG:-client_host=host.docker.internal}'
+      IGNITION_LOCAL_SITES_PATH: '${PWD}'
+    volumes:
+      - './security:/var/www/html'
+      - './secrets:/tmp/secrets'
+    networks:
+      - security
+      - backend
+      - vpc
+    depends_on:
+      - security-db
+  security-db:
+    image: postgres:${APP_SECURITY_DB_IMAGE_VERSION}
+    ports:
+      - '${APP_SECURITY_DB_PORT:-5432}:5432'
+    env_file:
+      - ./security/.env
+    environment:
+      PGPASSWD: '${DB_PASSWORD:-secret}'
+      POSTGRES_DB: '${DB_DATABASE:-security}'
+      POSTGRES_USER: '${DB_USERNAME:-security}'
+      POSTGRES_PASSWORD: '${DB_PASSWORD:-secret}'
+    volumes:
+      - security-db-data:/var/lib/postgresql/data
+    networks:
+      - security
+    healthcheck:
+      test: ["CMD", "pg_isready", "-q", "-d", "${DB_DATABASE:-security}", "-U", "${DB_USERNAME:-security}"]
+      retries: 3
+      timeout: 5s
   zoo1:
     image: ${ZOOKEEPER_IMAGE}:${ZOOKEEPER_IMAGE_VERSION}
     restart: unless-stopped
@@ -214,7 +260,7 @@ services:
   kafkaui:
     image: provectuslabs/kafka-ui:latest
     ports:
-      - 8080:8080
+      - 8081:8080
     environment:
       KAFKA_CLUSTERS_0_NAME: local
       KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka1:19092
@@ -245,6 +291,9 @@ networks:
   backend:
     driver: bridge
     internal: true
+  security:
+    driver: bridge
+    internal: true
   vpc:
     driver: bridge
 volumes:
@@ -257,3 +306,4 @@ volumes:
   kafka1-data:
   kafka2-data:
   kafka3-data:
+  security-db-data:
