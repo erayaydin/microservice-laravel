@@ -1,2 +1,7 @@
+### Project
+/.env
+/.env.backup
+/.env.production
+
 ### Intellij
 /.idea
