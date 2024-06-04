@@ -3,6 +3,7 @@
 namespace MService\License\Middlewares;
 
 use Closure;
+use Exception;
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
 use Illuminate\Http\Request;
@@ -19,8 +20,17 @@ class EnsureTokenIsValid
     {
         $jwt = $request->bearerToken();
 
+        if (is_null($jwt)) {
+            return response(status: 403);
+        }
+
         $pKey = file_get_contents("/tmp/secrets/oauth-public.key");
-        $decoded = JWT::decode($jwt, new Key($pKey, 'RS256'));
+
+        try {
+            $decoded = JWT::decode($jwt, new Key($pKey, 'RS256'));
+        } catch (Exception) {
+            return response(status: 403);
+        }
 
         $request->merge(['user_id' => $decoded->sub]);
 
