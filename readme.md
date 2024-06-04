@@ -12,6 +12,7 @@
 - [Microservices](#microservices)
   - [Security](#security-service)
   - [License](#license-service)
+  - [File Management](#file-management-service)
 - [Contributing](#contributing)
 - [License](#license)
 
@@ -143,6 +144,19 @@ Auth verification will be handled with JWT key decoding.
 #### Data Store
 
 - **PostgreSQL**: The License Service uses PostgreSQL to store license information.
+- 
+### File Management Service
+
+The File Management Service is responsible for handling file operations.
+End user can upload and download files.
+
+#### Endpoints
+
+- `GET /health`: Health check endpoint. It'll respond with 200 status code.
+
+#### Data Store
+
+- **PostgreSQL**: The File Management Service uses PostgreSQL to store file metadata.
 
 ## Contributing
 
