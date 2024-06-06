@@ -9,6 +9,7 @@
     "firebase/php-jwt": "^6.10",
     "laravel/framework": "^11.9",
     "laravel/tinker": "^2.9",
+    "lorisleiva/laravel-actions": "^2.8",
     "mateusjunges/laravel-kafka": "^2.1"
   },
   "require-dev": {
