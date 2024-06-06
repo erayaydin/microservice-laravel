@@ -137,6 +137,52 @@ services:
       test: ["CMD", "pg_isready", "-q", "-d", "${DB_DATABASE:-filemanagement}", "-U", "${DB_USERNAME:-filemanagement}"]
       retries: 3
       timeout: 5s
+  notification:
+    build:
+      context: ./notification
+      dockerfile: Dockerfile
+      args:
+        WWWGROUP: '${WWWGROUP}'
+    extra_hosts:
+      - 'host.docker.internal:host-gateway'
+    ports:
+      - '${APP_NOTIFICATION_PORT:-8085}:80'
+    env_file:
+      - ./notification/.env
+    environment:
+      WWWUSER: '${WWWUSER}'
+      APP_IN_DOCKER: 1
+      XDEBUG_MODE: '${APP_NOTIFICATION_XDEBUG_MODE:-off}'
+      XDEBUG_CONFIG: '${APP_NOTIFICATION_XDEBUG_CONFIG:-client_host=host.docker.internal}'
+      IGNITION_LOCAL_SITES_PATH: '${PWD}'
+    volumes:
+      - './notification:/var/www/html'
+      - './secrets:/tmp/secrets'
+    networks:
+      - notification
+      - backend
+      - vpc
+    depends_on:
+      - notification-db
+  notification-db:
+    image: postgres:${APP_NOTIFICATION_DB_IMAGE_VERSION}
+    ports:
+      - '${APP_NOTIFICATION_DB_PORT:-5435}:5432'
+    env_file:
+      - ./notification/.env
+    environment:
+      PGPASSWD: '${DB_PASSWORD:-secret}'
+      POSTGRES_DB: '${DB_DATABASE:-notification}'
+      POSTGRES_USER: '${DB_USERNAME:-notification}'
+      POSTGRES_PASSWORD: '${DB_PASSWORD:-secret}'
+    volumes:
+      - notification-db-data:/var/lib/postgresql/data
+    networks:
+      - notification
+    healthcheck:
+      test: ["CMD", "pg_isready", "-q", "-d", "${DB_DATABASE:-notification}", "-U", "${DB_USERNAME:-notification}"]
+      retries: 3
+      timeout: 5s
   zoo1:
     image: ${ZOOKEEPER_IMAGE}:${ZOOKEEPER_IMAGE_VERSION}
     restart: unless-stopped
@@ -392,6 +438,9 @@ networks:
   file-management:
     driver: bridge
     internal: true
+  notification:
+    driver: bridge
+    internal: true
   vpc:
     driver: bridge
 volumes:
@@ -407,3 +456,4 @@ volumes:
   security-db-data:
   license-db-data:
   file-management-db-data:
+  notification-db-data:
