@@ -148,7 +148,7 @@ Auth verification will be handled with JWT key decoding.
 #### Data Store
 
 - **PostgreSQL**: The License Service uses PostgreSQL to store license information.
-- 
+
 ### File Management Service
 
 The File Management Service is responsible for handling file operations.
