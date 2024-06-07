@@ -14,4 +14,9 @@ class AppServiceProvider extends AggregateServiceProvider
     protected $providers = [
         RouteServiceProvider::class,
     ];
+
+    public function register(): void
+    {
+        $this->loadMigrationsFrom($this->app->path('Migrations'));
+    }
 }
