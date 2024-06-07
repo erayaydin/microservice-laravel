@@ -9,6 +9,7 @@ WORKDIR /var/www/html
 ENV DEBIAN_FRONTEND noninteractive
 ENV TZ=UTC
 ENV SUPERVISOR_PHP_COMMAND="/usr/bin/php -d variables_order=EGPCS /var/www/html/artisan serve --host=0.0.0.0 --port=80"
+ENV SUPERVISOR_WORKER_COMMAND="/usr/bin/php -d variables_order=EGPCS /var/www/html/artisan queue:listen"
 ENV SUPERVISOR_KAFKA_CONSUMER_COMMAND="/usr/bin/php /var/www/html/artisan app:consume-messages"
 ENV SUPERVISOR_PHP_USER="app"
 
