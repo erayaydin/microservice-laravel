@@ -68,6 +68,7 @@ services:
       - './secrets:/tmp/secrets'
     networks:
       - license
+      - file-management
       - backend
       - vpc
     depends_on:
@@ -114,6 +115,7 @@ services:
       - './secrets:/tmp/secrets'
     networks:
       - file-management
+      - license
       - backend
       - vpc
     depends_on:
