@@ -7,7 +7,6 @@ use Illuminate\Foundation\Events\DiagnosingHealth;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
-use MService\License\Middlewares\EnsureTokenIsValid;
 
 class RouteServiceProvider extends ServiceProvider
 {
@@ -47,7 +46,7 @@ class RouteServiceProvider extends ServiceProvider
 
     public function routing(): void
     {
-        Route::middleware(['api', EnsureTokenIsValid::class])
+        Route::middleware(['api'])
             ->prefix('api/v1')
             ->group($this->app->path('Routes/ApiV1.php'));
 
