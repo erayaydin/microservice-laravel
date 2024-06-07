@@ -9,6 +9,7 @@ WORKDIR /var/www/html
 ENV DEBIAN_FRONTEND noninteractive
 ENV TZ=UTC
 ENV SUPERVISOR_PHP_COMMAND="/usr/bin/php /var/www/html/artisan app:consume-messages"
+ENV SUPERVISOR_WORKER_COMMAND="/usr/bin/php /var/www/html/artisan queue:listen"
 ENV SUPERVISOR_PHP_USER="app"
 
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone

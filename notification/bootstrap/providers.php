@@ -1,3 +1,7 @@
 <?php
 
-return [];
+use MService\Notification\Providers\AppServiceProvider;
+
+return [
+    AppServiceProvider::class,
+];
