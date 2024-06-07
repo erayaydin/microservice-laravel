@@ -3,9 +3,11 @@
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
+use MService\Notification\Commands\ConsumeMessages;
 use function Illuminate\Filesystem\join_paths;
 
 $app = Application::configure(basePath: dirname(__DIR__))
+    ->withCommands([ConsumeMessages::class])
     ->withMiddleware(function (Middleware $middleware) {
         //
     })
