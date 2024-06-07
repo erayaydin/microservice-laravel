@@ -244,7 +244,7 @@ services:
     image: elkozmon/zoonavigator:${ZOONAVIGATOR_VERSION}
     restart: unless-stopped
     ports:
-      - "9000:9000"
+      - "19000:9000"
     environment:
       - CONNECTION_ZK1_NAME=zoo1
       - CONNECTION_ZK1_CONN=zoo1:2181
@@ -425,6 +425,20 @@ services:
       - schemaregistry1
       - schemaregistry2
       - kafka-connect1
+  minio:
+    image: quay.io/minio/minio:${MINIO_IMAGE_VERSION}
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    command: server /data --console-address ":9001"
+    networks:
+      - file-management
+      - vpc
+    volumes:
+      - minio-data:/data
+    environment:
+      - MINIO_ROOT_USER=${MINIO_USER}
+      - MINIO_ROOT_PASSWORD=${MINIO_PASSWORD}
 networks:
   backend:
     driver: bridge
@@ -457,3 +471,4 @@ volumes:
   license-db-data:
   file-management-db-data:
   notification-db-data:
+  minio-data:
