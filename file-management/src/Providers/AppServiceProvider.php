@@ -17,6 +17,8 @@ class AppServiceProvider extends AggregateServiceProvider
 
     public function register(): void
     {
+        parent::register();
+
         $this->loadMigrationsFrom($this->app->path('Migrations'));
     }
 }
