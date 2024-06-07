@@ -13,6 +13,7 @@
   - [Security](#security-service)
   - [License](#license-service)
   - [File Management](#file-management-service)
+- [Need to Implement](#need-to-implement)
 - [Contributing](#contributing)
 - [License](#license)
 
@@ -111,7 +112,8 @@ Authentication and authorization will be handled with OAuth2.
 
 #### Endpoints
 
-- `GET /health`: Health check endpoint. It'll respond with 200 status code.
+- `GET /health`: Health check endpoint. It'll respond with **200** status code.
+- `POST /users`: Create new user. It'll respond with **201** status code if success.
 - `GET /oauth/authorize`: Show authorization to the end user.
 - `POST /oauth/authorize`: Approve authorization.
 - `DELETE /oauth/authorize`: Deny authorization.
@@ -140,6 +142,8 @@ Auth verification will be handled with JWT key decoding.
 #### Endpoints
 
 - `GET /health`: Health check endpoint. It'll respond with 200 status code.
+- `GET /me`: Get current user license information.
+- `GET /users/{user}`: Get user's license information. (need `admin.licenses` scope).
 
 #### Data Store
 
@@ -153,10 +157,26 @@ End user can upload and download files.
 #### Endpoints
 
 - `GET /health`: Health check endpoint. It'll respond with 200 status code.
+- `GET /files`: List of current user's uploaded files.
+- `POST /files`: Upload new file to user's bucket.
+- `GET /files/{file}/download`: Downloads the given file in attachment mode.
 
 #### Data Store
 
 - **PostgreSQL**: The File Management Service uses PostgreSQL to store file metadata.
+
+## Need to Implement
+
+- Use [`Kong`](https://github.com/Kong/kong) api-gateway to single entrypoint.
+- Implement permission and scope system to license `/users/{user}` endpoint.
+- Use `docker secret` to share oauth private and public keys.
+- Implement `ObjectStorage` service to manage buckets.
+- Use RDKafka data processor instead of the current one.
+- Define schemas for `user.created` and `license.updated` kafka messages.
+- Add unit, integration and e2e tests.
+- Add k8s yaml files.
+- Add OpenAPI documentation for the api-gateway and services.
+- Use kong+security to validate and decode OAuth2
 
 ## Contributing
 
