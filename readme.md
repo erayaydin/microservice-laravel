@@ -174,6 +174,7 @@ End user can upload and download files.
 - Use RDKafka data processor instead of the current one.
 - Define schemas for `user.created` and `license.updated` kafka messages.
 - Remove config files for `services` and `kafka`. Use provider to bind instances with values.
+- Use kafka-connect1 for connect services to kafka cluster. 
 - Add unit, integration and e2e tests.
 - Add k8s yaml files.
 - Add OpenAPI documentation for the api-gateway and services.
